@@ -1,0 +1,67 @@
+services:
+  app1-fastapi:
+    build:
+      context: ./app1/backend
+    ports:
+      - "8000:8000"
+    networks:
+     - app1
+    depends_on:
+      - app1-database
+  
+  app1-database:
+    build:
+      context: ./app1/database
+    ports:
+      - "27017:27017"
+    networks:
+     - app1
+
+  app2-fastapi:
+    build:
+      context: ./app2/backend
+    ports:
+      - "8001:8000"
+    networks:
+     - app2
+    depends_on:
+      app2-database:
+        condition: service_healthy
+  
+  app2-database:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: "ChangeMe"
+      MYSQL_USER: app
+    ports:
+      - "3305:3306"
+    volumes:
+      - ./app2/database:/var/lib/mysql:rw
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+     - app2
+
+  lolsauce-phpmyadmin: 
+    image: phpmyadmin
+    environment:
+      PMA_HOST: app2-database
+      MYSQL_ROOT_PASSWORD: "root"
+    ports:
+      - "8080:80"
+    depends_on:
+      - app2-database
+    networks:
+     - app2
+
+
+networks:
+  app1:
+    driver: bridge
+  app2:
+    driver: bridge
