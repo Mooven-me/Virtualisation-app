@@ -7,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,8 +19,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build images with Docker Compose
-        run: docker compose build
-      
-      - name: Push images
+      - name: Build Docker images for app1
+        run: docker compose build app1-fastapi app1-database
+
+      - name: Build Docker images for app2
+        run: docker compose build app2-fastapi app2-database
+
+      - name: Push Docker images
         run: docker compose push

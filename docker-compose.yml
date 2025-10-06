@@ -11,7 +11,7 @@ services:
       - app1-database
   
   app1-database:
-    image: moovenn/virtualisation-app1-fastapi:${IMAGE_TAG:-latest}
+    image: moovenn/virtualisation-app1-database:${IMAGE_TAG:-latest}
     build:
       context: ./app1/database
     ports:
@@ -20,7 +20,7 @@ services:
      - app1
 
   app2-fastapi:
-    image: moovenn/virtualisation-app1-fastapi:${IMAGE_TAG:-latest}
+    image: moovenn/virtualisation-app2-fastapi:${IMAGE_TAG:-latest}
     build:
       context: ./app2/backend
     ports:
